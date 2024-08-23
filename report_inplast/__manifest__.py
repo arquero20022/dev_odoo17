@@ -28,6 +28,8 @@
         "reports/coa_product_document.xml",
         "reports/packing_list.xml",
         "reports/pnt_report_invoice.xml",
+        "reports/ir_action_report.xml",
+        "reports/stock_warehouse_label.xml",
         "views/picking_report_views.xml",
     ],
 }

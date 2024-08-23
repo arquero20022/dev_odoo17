@@ -66,7 +66,16 @@
                                         <div><span style="font-size:10px">Descripción / Description: </span>
                                             <span style="font-size:13px" t-out="move_line.product_id.display_name">Product</span>
                                         </div>
-                                    </div>
+                                    </di table table-sm table-borderless">
+                <t t-foreach="range(nRows)" t-as="row">
+                    <tr>
+                        <t t-foreach="range(nCols)" t-as="column">
+                            <t t-if="index_to_qtys and not current_quantity">
+                                <t t-set="index_to_qty" t-value="index_to_qtys.popitem()"/>
+                                <t t-set="move_line" t-value="move_lines[index_to_qty[0]]"/>
+                                <t t-set="current_quantity" t-value="index_to_qty[1]"/>
+                            </t>
+                            <t t-if="currv>
                                     <div class="fw-bold">
                                         <div><span style="font-size:10px">Color / Colour: </span>
                                         </div>

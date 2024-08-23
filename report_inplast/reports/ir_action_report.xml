@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+     <record id="stock_warehouse_label_report" model="ir.actions.report">
+            <field name="name">Warehouse Label</field>
+            <field name="model">stock.picking</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">report_inplast.stock_warehouse_label_report_document</field>
+            <field name="report_file">report_inplast.stock_warehouse_label_report_document</field>
+            <field name="print_report_name">'Warehouse Labels - %s - %s' % (object.partner_id.name or '', object.name)</field>
+            <field name="attachment">'Warehouse Labels - %s - %s' % (object.partner_id.name or '', object.name)</field>
+            <field name="binding_model_id" ref="stock.model_stock_picking"/>
+            <field name="binding_type">report</field>
+        </record>
+
+</odoo>

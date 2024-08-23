@@ -1,71 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Todos los templates para picking deben tener prioridad 922 para el filtro del M2O -->
+        <!-- All picking templates must have priority 922 for the M2O filter -->
         <template id="pnt_report_delivery_document" name="Custom Delivery Document">
             <t t-name="pnt_report_delivery_document">
                 <t t-call="web.html_container">
                     <t t-call="stock.report_delivery_document"/>
-                    <!-- ITERAMOS LOTES -->
-                    <t t-foreach="o.move_line_ids" t-as="line">
-                            <t t-if="o.partner_id.pnt_picking_report_id.coa">
-                                <t t-if="line.product_id.pnt_product_coa.type == 'normal' or line.product_id.pnt_product_coa.type == 'buxton'"
-                                   t-call="report_inplast.coa_product_document_a"/>
-                                <t t-if="line.product_id.pnt_product_coa.type == 'nmp'"
-                                   t-call="report_inplast.coa_product_nmp_document"/>
-                                <t t-if="line.product_id.pnt_product_coa.type == 'asas'"
-                                   t-call="report_inplast.coa_product_handle_document"/>
+                    <!-- ITERATE BATCHES Para cada Lote -->
+                    <t t-foreach="o.get_move_lines_by_parent_lot()" t-as="line">
+                        <t t-if="o.partner_id.pnt_picking_report_id.coa">
+                            <t t-if="line.product_id.pnt_product_coa.type == 'normal' or line.product_id.pnt_product_coa.type == 'buxton'"
+                               t-call="report_inplast.coa_product_document_a"/>
+                            <t t-if="line.product_id.pnt_product_coa.type == 'nmp'"
+                               t-call="report_inplast.coa_product_nmp_document"/>
+                            <t t-if="line.product_id.pnt_product_coa.type == 'asas'"
+                               t-call="report_inplast.coa_product_handle_document"/>
 
-                                <!-- igual que arriba para buxton -->
-                                <t t-if="line.product_id.pnt_product_coa.type == 'buxton'">
-                                    <t t-if="o.partner_id.pnt_picking_report_id.coa_batch_certificate"
+                            <!-- same as above for buxton -->
+                            <t t-if="line.product_id.pnt_product_coa.type == 'buxton'">
+                                <t t-if="o.partner_id.pnt_picking_report_id.coa_batch_certificate"
                                    t-call="report_inplast.coa_product_batch_certificate_document"/>
-                                </t>
-                                <t t-if="o.partner_id.pnt_picking_report_id.coa_multicolor
-                             and line.product_id.pnt_product_coa.print_multicolor"
-                                   t-call="report_inplast.coa_product_document_multicolor_attachment"/>
-                                <t t-if="o.partner_id.pnt_picking_report_id.coa_milk
-                             and line.product_id.pnt_product_coa.print_quality_meassure"
-                                   t-call="report_inplast.coa_product_document_meassures_attachment"/>
-                                <t t-if="line.product_id.pnt_product_coa.print_components"
-                                   t-call="report_inplast.coa_product_document_attachment"/>
-                                <!-- FALTA BOX TRACKING  si cliente box tracking y ¿cajas? ... informe cajas-->
                             </t>
+                            <t t-if="o.partner_id.pnt_picking_report_id.coa_multicolor
+                             and line.product_id.pnt_product_coa.print_multicolor"
+                               t-call="report_inplast.coa_product_document_multicolor_attachment"/>
+                            <t t-if="o.partner_id.pnt_picking_report_id.coa_milk
+                             and line.product_id.pnt_product_coa.print_quality_meassure"
+                               t-call="report_inplast.coa_product_document_meassures_attachment"/>
+                            <t t-if="line.product_id.pnt_product_coa.print_components"
+                               t-call="report_inplast.coa_product_document_attachment"/>
+                            <!-- BOX TRACKING MISSING if customer box tracking and boxes? ... box report-->
+                        </t>
                     </t>
                     <t t-if="o.carrier_id.pnt_print_picking_list" t-call="report_inplast.packing_list"/>
                 </t>
             </t>
         </template>
 
-        <!-- Plantilla para extender stock_report_delivery_has_serial_move_line -->
+        <!-- Template to extend stock_report_delivery_has_serial_move_line -->
         <template id="report_delivery_has_serial_move_line_inh"
                   inherit_id="stock.stock_report_delivery_has_serial_move_line" priority="99">
             <xpath expr="//t[@t-name='stock.stock_report_delivery_has_serial_move_line']" position="inside">
 
                 <td class="text-center">
                     <span>(</span>
-                    <span t-esc="move_line.quantity * o.product_id.pnt_box_qty"/>
+                    <span t-esc="move_line.quantity_done_by_lot * o.product_id.pnt_box_qty"/>
+                    <!--<span t-esc="o.get_quantity_done_lot * o.product_id.pnt_box_qty"/>-->
                     <span> X </span>
                     <span t-esc="o.product_id.pnt_parent_qty/o.product_id.pnt_box_qty"/>
-                    <span>Und. / Caja</span>
+                    <span>Units / Box</span>
                     <span>)</span>
                 </td>
                 <td class="text-center">
-                    <span t-esc="move_line.quantity * o.product_id.pnt_parent_qty"/>
+                    <span t-esc="move_line.quantity_done_by_lot * o.product_id.pnt_parent_qty"/>
                 </td>
                 <td class="text-center">
                     <span t-esc="o.product_id.pnt_parent_qty"/>
                 </td>
             </xpath>
-        </template>
-
-        <!-- Plantilla para extender stock_report_delivery_aggregated_move_lines -->
-        <template id="report_delivery_aggregated_move_lines_inh"
-                  inherit_id="stock.stock_report_delivery_aggregated_move_lines" priority="99">
-            <xpath expr="//tr/td[last()]" position="after">
-                <td class="text-center">
-                    <span>hola2</span>
-                </td>
+            <xpath expr="//t[@name='move_line_lot']" position="replace">
+                <t t-if="has_serial_number" name="move_line_lot">
+                    <td><span t-field="move_line.lot_id.parent_id.name"/></td>
+                </t>
+            </xpath>
+            <xpath expr="///td[@name='move_line_lot_quantity']/span[@t-field='move_line.quantity']" position="replace">
+                <span t-field="move_line.quantity_done_by_lot"/>
             </xpath>
         </template>
 
@@ -73,26 +72,33 @@
             <field name="name">inplast.report.picking.attachments</field>
             <field name="inherit_id" ref="stock.report_delivery_document"/>
             <field name="arch" type="xml">
+                <xpath expr="//table[@class='table table-sm mt48']/tbody/t[@t-else='']/t" position="replace">
+                    <t t-if="has_serial_number">
+                        <tr t-foreach="o.get_move_lines_by_parent_lot()" t-as="move_line">
+                            <t t-call="stock.stock_report_delivery_has_serial_move_line"/>
+                        </tr>
+                    </t>
+                </xpath>
                 <xpath expr="//table[@name='stock_move_line_table']/thead/tr" position="inside">
                     <th class="text-center">
-                        <strong>Caja/Unidades</strong>
+                        <strong>Box/Units</strong>
                     </th>
                     <th class="text-center">
-                        <strong>Unidades</strong>
+                        <strong>Units</strong>
                     </th>
                     <th class="text-center">
-                        <strong>Unidades x bulto</strong>
+                        <strong>Units x package</strong>
                     </th>
                 </xpath>
 
-                <!-- Extender las vistas en el tbody -->
+                <!-- Extend views in the tbody -->
                 <xpath expr="//t[@t-call='stock.stock_report_delivery_has_serial_move_line']" position="replace">
                     <t t-call="report_inplast.report_delivery_has_serial_move_line_inh"/>
                 </xpath>
 
-                <xpath expr="//t[@t-call='stock.stock_report_delivery_aggregated_move_lines']" position="replace">
+                <!--<xpath expr="//t[@t-call='stock.stock_report_delivery_aggregated_move_lines']" position="replace">
                     <t t-call="report_inplast.report_delivery_aggregated_move_lines_inh"/>
-                </xpath>
+                </xpath>-->
 
                 <xpath expr="//div[@t-if='not o.signature']" position="before">
                     <div style="width: 65%;">
@@ -104,41 +110,41 @@
                     </div>
                     <t t-set="lines" t-value="o.move_ids"/>
 
-                    <!-- Calcula las cantidades totales -->
+                    <!-- Calculate total quantities -->
                     <t t-set="total_quantity" t-value="sum(line.quantity for line in lines)"/>
                     <t t-set="total_quantity_box"
                        t-value="sum((line.product_id.pnt_box_qty)*line.quantity for line in lines)"/>
 
                     <div style="margin-top: 20px;">
-                        <strong>Total bultos:</strong>
+                        <strong>Total packages:</strong>
                         <span t-esc="total_quantity"/>
                         <br/>
-                        <strong style="margin-top: 5px;">Total cajas:</strong>
+                        <strong style="margin-top: 5px;">Total boxes:</strong>
                         <span t-esc="total_quantity_box">0</span>
                         <br/>
-                        <strong style="margin-top: 5px;">Total peso neto:</strong>
+                        <strong style="margin-top: 5px;">Total net weight:</strong>
                         <span t-esc="o.weight"/>
                         <br/>
-                        <strong style="margin-top: 5px;">Total peso bruto:</strong>
+                        <strong style="margin-top: 5px;">Total gross weight:</strong>
                         <span t-esc="o.shipping_weight"/>
                         <br/>
                     </div>
                     <div class="row" style="margin-top: 20px;">
                         <div class="col-4">
                             <strong style="border: 2px solid #000000; padding: 5px; text-align: left;background-color:#D3D3D3;">
-                                Nº Pedido:
+                                Order No.:
                             </strong>
                             <span style="margin-left: 5px" t-field="o.sale_id.client_order_ref"/>
                         </div>
                         <div class="col-offset-8 col-4">
                             <strong style="border: 2px solid #000000; padding: 5px; text-align: left;background-color:#D3D3D3;">
-                                Agencia de Transporte:
+                                Transport Agency:
                             </strong>
                             <span style="margin-left: 5px" t-field="o.carrier_id"/>
                         </div>
                         <div class="col-offset-16 col-4 ">
                             <strong style="border: 2px solid #000000; padding: 5px; text-align: left; background-color:#D3D3D3;">
-                                Fecha:
+                                Date:
                             </strong>
                             <span style="margin-left: 5px" t-esc="o.date.strftime('%d/%m/%Y')"/>
                         </div>
@@ -189,12 +195,10 @@
                         </div>
                     </div>
                     <div style="margin-top: 15px;">
-                        <p>El poseedor final de los residuos de envases y embalajes usados deberá entregarlos en
-                            condiciones
-                            adecuadas de separación por materiales a un agente ecológico para su reutilización a un
-                            recuperador, a un reciclador o a un valorizador autorizados.\n Inscrita en el Registro
-                            Mercantil
-                            de Alicante: Tomo 1.712 General, Folio 11. Hoja nº. A-27.348. Inscripción 1ª, 14-6-1994 -
+                        <p>The final holder of used packaging waste must deliver it in
+                            appropriate conditions for separation by materials to an ecological agent for reuse to a
+                            collector, recycler, or authorized valorizer.\n Registered in the Commercial Registry
+                            of Alicante: Volume 1,712 General, Folio 11. Sheet no. A-27.348. Registration 1st, 14-6-1994 -
                             C.I.F.
                             A-03946472
                         </p>
@@ -213,11 +217,11 @@
                     <div class="row justify-content-center align-items-center">
                         <div class="col-6 text-center"
                              style=" border: 1px solid black;height: 30px;background-color:#D3D3D3;">
-                            <strong style="text-align: center;width: 100%;">Cliente</strong>
+                            <strong style="text-align: center;width: 100%;">Customer</strong>
                         </div>
                         <div class="col-offset-6 col-6 text-center"
                              style=" border: 1px solid black;height: 30px;background-color:#D3D3D3; margin-left 3px">
-                            <strong>Plaza</strong>
+                            <strong>Square</strong>
                         </div>
                     </div>
                     <div class="row gx-2">
@@ -244,6 +248,7 @@
                 <xpath expr="//div[contains(@class, 'row') and contains(@class, 'mt32') and contains(@class, 'mb32')]"
                        position="replace">
                 </xpath>
+
             </field>
             <field name="priority">99</field>
         </record>

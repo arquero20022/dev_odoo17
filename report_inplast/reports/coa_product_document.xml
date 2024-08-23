@@ -45,7 +45,7 @@
                         </div>
                         <div style="border: 1px solid black; padding: 2px;margin:1px;" class="col-2">
                             <t t-if="line.lot_id">
-                                <t t-esc="line.lot_id.name"/>
+                                <t t-esc="line.lot_id.parent_id.name"/>
                             </t>
 
                         </div>
@@ -54,7 +54,7 @@
                             <span>Quantity</span>
                         </div>
                         <div style="border: 1px solid black; padding: 2px;margin:1px;margin-top:2px;" class="col-2">
-                            <span t-esc="line.product_id.pnt_parent_qty * line.quantity"/>
+                            <span t-esc="line.product_id.pnt_parent_qty * line.quantity_done_by_lot"/>
                         </div>
 
                     </div>
@@ -192,7 +192,7 @@
                             <span>Denomination</span>
                         </div>
                         <div style="border: 1px solid black; padding: 3px;margin:1px;" class="col-6">
-                            <span t-field="line.lot_id.name"/>
+                            <span t-field="line.lot_id.parent_id.name"/>
                         </div>
                         <div style="background-color:#03fdfd;border: 1px solid black; padding: 2px;margin:1px;"
                              class="col-2">
@@ -217,7 +217,7 @@
                         </div>
                         <div style="border: 1px solid black; padding: 2px;margin:1px;" class="col-2">
 
-                            <t t-esc="line.lot_id.name"/>
+                            <t t-esc="line.lot_id.parent_id.name"/>
 
 
                         </div>
@@ -226,7 +226,7 @@
                             <span>Quantity</span>
                         </div>
                         <div style="border: 1px solid black; padding: 2px;margin:1px;margin-top:2px;" class="col-2">
-                            <span t-esc="line.product_id.pnt_parent_qty * line.quantity"/>
+                            <span t-esc="line.product_id.pnt_parent_qty * line.quantity_done_by_lot"/>
                         </div>
 
                     </div>
@@ -338,7 +338,7 @@
                         </div>
                         <div style="border: 1px solid black; padding: 2px;margin:1px;" class="col-2">
                             <t t-if="line.lot_id">
-                                <t t-esc="line.lot_id.name"/>
+                                <t t-esc="line.lot_id.parent_id.name"/>
                             </t>
 
                         </div>
@@ -347,7 +347,7 @@
                             <span>Quantity</span>
                         </div>
                         <div style="border: 1px solid black; padding: 2px;margin:1px;margin-top:2px;" class="col-2">
-                            <span t-esc="line.product_id.pnt_parent_qty * line.quantity"/>
+                            <span t-esc="line.product_id.pnt_parent_qty * line.quantity_done_by_lot"/>
                         </div>
 
                     </div>
@@ -534,7 +534,7 @@
                                 <span>QUANTIT</span>
                             </div>
                             <div style="border: 1px solid black; padding: 2px;margin:1px;margin-top:2px;" class="col-2">
-                                <span t-field="line.quantity"/>
+                                <span t-field="line.quantity_done_by_lot"/>
                             </div>
 
                         </div>
@@ -563,7 +563,7 @@
                             <div style="border: 1px solid black; padding: 5px;margin:1px; text-align: center;"
                                  class="col-4">
                                 <t t-if="line.lot_id">
-                                    <span t-esc="line.lot_id.name"/>
+                                    <span t-esc="line.lot_id.parent_id.name"/>
                                 </t>
                             </div>
 
@@ -888,8 +888,8 @@
                             <span>Batch Nº</span>
                         </div>
                         <div style="border: 1px solid black; padding: 2px;margin:1px;" class="col-2">
-                            <t t-if="line.lot_id">
-                                <t t-esc="line.lot_id.name"/>
+                            <t t-if="line.lot_id.parent_id">
+                                <t t-esc="line.lot_id.parent_id.name"/>
                             </t>
 
                         </div>
@@ -898,7 +898,7 @@
                             <span>Quantity</span>
                         </div>
                         <div style="border: 1px solid black; padding: 2px;margin:1px;margin-top:2px;" class="col-2">
-                            <span t-esc="line.product_id.pnt_parent_qty * line.quantity"/>
+                            <span t-esc="line.product_id.pnt_parent_qty * line.quantity_done_by_lot"/>
                         </div>
 
                     </div>
@@ -970,7 +970,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <t t-foreach="line.lot_id.quality_meassure_line_ids" t-as="meassure">
+                        <t t-foreach="line.lot_id.parent_id.quality_meassure_line_ids" t-as="meassure">
                             <tr>
                                 <td style="text-align: center;">
                                     <span t-esc="meassure.figure"></span>
