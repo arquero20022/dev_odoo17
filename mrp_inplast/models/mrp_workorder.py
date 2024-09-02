@@ -11,7 +11,7 @@ from odoo.tools import file_open
 
 
 class MrpProduction(models.Model):
-    _inherit = 'mrp.production'
+    _inherit = 'mrp.workorder'
 
     def add_pallet_boxes(self):
         self.ensure_one()

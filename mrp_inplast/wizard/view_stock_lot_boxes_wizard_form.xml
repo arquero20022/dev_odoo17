@@ -1,0 +1,21 @@
+<odoo>
+    <record id="view_stock_lot_boxes_wizard_form" model="ir.ui.view">
+        <field name="name">stock.lot.boxes.wizard.form</field>
+        <field name="model">stock.lot.boxes.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Add Boxes to Lot">
+                <group>
+                    <field name="lot_id"/>
+                    <field name="pnt_barcode_input"/>
+                    <field name="pnt_processed_barcodes" widget="many2many_tags"/>
+                    <field name="processed_count"/>
+                    <field name="remaining_count"/>
+                </group>
+                <footer>
+                    <button string="Add" type="object" name="add_lots" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

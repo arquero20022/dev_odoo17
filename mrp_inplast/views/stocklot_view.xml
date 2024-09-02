@@ -15,6 +15,10 @@
 
                         <!-- Add the related boxes field -->
                         <field name="related_boxes_ids" widget="many2many_tags" readonly="0"/>
+                        <button name="action_open_stock_lot_boxes_wizard"
+                                type="object"
+                                string="Add Boxes"
+                                class="oe_highlight"/>
                     </group>
                 </xpath>
             </field>

@@ -18,6 +18,7 @@
         "custom_inplast",
         "product_inplast",
         "base_automation",
+        "mrp_lot_as_serial",
     ],
     "data": [
         "views/res_company_views.xml",
@@ -28,6 +29,7 @@
         "data/server_actions.xml",
         "wizard/pallet_boxes_wizard_views.xml",
         "wizard/Confirm_Delete_Lot_Wizard_view.xml",
+        "wizard/view_stock_lot_boxes_wizard_form.xml",
         "security/ir.model.access.csv",
     ],
     'assets': {
